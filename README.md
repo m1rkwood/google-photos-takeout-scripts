@@ -20,8 +20,8 @@ Since whenever you edit a picture with Google Photos, it saves a new file and ad
 
 Navigate to the main Google Photos folder and run these commands:
 ```
-$ for file in */*.jpg.json; do cp -v "${file}" "${file/%.jpg.json/-edited.jpg.json}"; done
-$ for file in */*.JPG.json; do cp -v "${file}" "${file/%.JPG.json/-edited.JPG.json}"; done
+for file in */*.jpg.json; do cp -v "${file}" "${file/%.jpg.json/-edited.jpg.json}"; done
+for file in */*.JPG.json; do cp -v "${file}" "${file/%.JPG.json/-edited.JPG.json}"; done
 ```
 You can do it for all needed extensions  
 
@@ -32,7 +32,7 @@ I used a library called `rename` that you can install through `brew` if you're o
 
 Navigate to the folder of your choice and run this command:
 ```
-$ rename 's/^(.{46}).*(\..*)$/$1$2/' * -n
+rename 's/^(.{46}).*(\..*)$/$1$2/' * -n
 ```
 Add `-n` to the command in a folder to see if any file is gonna be shortened and how.  
 WARNING: if your file is a .jpg.json, it's gonna cut into the jpg extension as it won't recognize the double extension. Fix these ones manually before.
@@ -44,11 +44,11 @@ Otherwise, you can download the package here and install it manually: `https://e
 
 This command will take the `photoTakenTime { timestamp: '' }` out of the .json associated to a picture and integrate it as EXIF data in the picture as `DateTimeOriginal`. See the "useful scripts" section below to find additional tags that you can add to this command to get more data back into your pictures.
 ```
-$ exiftool -r -d %s -tagsfromfile "%d/%F.json" "-DateTimeOriginal<PhotoTakenTimeTimestamp" --ext json -overwrite_original -progress <directory_name>
+exiftool -r -d %s -tagsfromfile "%d/%F.json" "-DateTimeOriginal<PhotoTakenTimeTimestamp" --ext json -overwrite_original -progress <directory_name>
 ```
 Sometimes the file will end with .json instead of .jpg.json, so I also ran this command
 ```
-$ exiftool -r -d %s -tagsfromfile "%d/%f.json" "-DateTimeOriginal<PhotoTakenTimeTimestamp" --ext json -overwrite_original -progress <directory_name>
+exiftool -r -d %s -tagsfromfile "%d/%f.json" "-DateTimeOriginal<PhotoTakenTimeTimestamp" --ext json -overwrite_original -progress <directory_name>
 ```
 Also, some files have their .json filename cropped or changed, you will have to check when sorting photos (or run the script below beforehand).
 
@@ -56,7 +56,7 @@ Also, some files have their .json filename cropped or changed, you will have to 
 In my specific case, Live photos would be extracted as a .JPG and a (1).JPG instead of a .JPG and a .MOV.
 So I ran exiftool to correct this for files that have a filetype MOV. The script checks the filetype in the EXIF data of the file. If it's a .MOV, it will change the extension of the file to .MOV
 ```
-$ exiftool -r -ext jpg -overwrite_original -filename=%f.MOV -if '$filetype eq "MOV"' -progress <directory_name>
+exiftool -r -ext jpg -overwrite_original -filename=%f.MOV -if '$filetype eq "MOV"' -progress <directory_name>
 ```
 
 ## Sort pictures by month
@@ -64,7 +64,7 @@ Using this lib: `https://github.com/andrewning/sortphotos` (clone it through `gi
 
 I ran it into every year folder separately so that I could see the result and modify quickly any problem (problems with wrong dates would usually be sent to the last folder created)
 ```
-$ sortphotos --sort %Y/%m --recursive <source_directory> <destination_directory>
+sortphotos --sort %Y/%m --recursive <source_directory> <destination_directory>
 ```
 You can use `-copy` if you want to copy instead of moving  
 You can use `--use-only-tags EXIF:DateTimeOriginal` if you see some pictures that are not sent to the right year/folder (sortphotos by default uses the earliest date found in the EXIF data file)
@@ -73,27 +73,27 @@ You can use `--use-only-tags EXIF:DateTimeOriginal` if you see some pictures tha
 ### View EXIF data for individual photos
 If you need to adjust EXIF for a specific picture or folder:
 ```
-$ exiftool <filename>
+exiftool <filename>
 ```
 ### Adjust EXIF for individual photos
 If you need to adjust EXIF for a specific picture or folder:
 ```
-$ exiftool -overwrite_original -DateTimeOriginal="1988-02-05 00:00:00" <file or directory>
+exiftool -overwrite_original -DateTimeOriginal="1988-02-05 00:00:00" <file or directory>
 ```
 ### If you want to integrate more data from the JSON file into the EXIF data
 The command below shows you different tags that you can extract from .json files to add to your pictures EXIF data.
 ```
-$ exiftool -r -d %s -tagsfromfile "%d/%F.json" "-GPSAltitude<GeoDataAltitude" "-GPSLatitude<GeoDataLatitude" "-GPSLatitudeRef<GeoDataLatitude" "-GPSLongitude<GeoDataLongitude" "-GPSLongitudeRef<GeoDataLongitude" "-Keywords<Tags" "-Subject<Tags" "-Caption-Abstract<Description" "-ImageDescription<Description" "-DateTimeOriginal<PhotoTakenTimeTimestamp" -ext "*" -overwrite_original -progress --ext json <directory_name>
+exiftool -r -d %s -tagsfromfile "%d/%F.json" "-GPSAltitude<GeoDataAltitude" "-GPSLatitude<GeoDataLatitude" "-GPSLatitudeRef<GeoDataLatitude" "-GPSLongitude<GeoDataLongitude" "-GPSLongitudeRef<GeoDataLongitude" "-Keywords<Tags" "-Subject<Tags" "-Caption-Abstract<Description" "-ImageDescription<Description" "-DateTimeOriginal<PhotoTakenTimeTimestamp" -ext "*" -overwrite_original -progress --ext json <directory_name>
 ```
 ### Remove all .json files
 When you don't need the JSON files anymore 
 Navigate to a directory and run (reminder: `.` is the current directory you're in)
 ```
-$ find . -name "*.json" -type f -delete
+find . -name "*.json" -type f -delete
 ```
 ### Remove -edited files
 On some of the directories, Google used to adjust contrast/colors for every image. I chose to remove that for some folders.
 Navigate to a directory and run (reminder: `.` is the current directory you're in)
 ```
-$ find . -name "*-edited.jpg" -type f -delete
+find . -name "*-edited.jpg" -type f -delete
 ```
