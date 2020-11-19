@@ -3,7 +3,9 @@ This is a guide on how to get your photos out of Google Photos and reorganize th
 Hope this can help some of you figuring out how to get a clean library out of your exports.
 
 All commands below are used with macOS, any linux/unix terminal will also work.
-To perform this, you need to be able to navigate through directories with a terminal, but for macOs users, you can also drag a folder from the finder into the terminal to paste its path.
+To perform this, you need to be able to navigate through directories with a terminal.  
+For macOs users, you can also drag a folder from the finder into the terminal to paste its path faster.
+If you're not comfortable with navigating your folders through a terminal, I encourage you to follow a quick tutorial online, it comes fairly easily with a bit of practice.
 
 ## Extract pictures from Google Takeout
 Go to `https://takeout.google.com/`, select Google Photos and export. The process may take a while and Google says it can take up to a few days.  
@@ -36,7 +38,7 @@ Add `-n` to the command in a folder to see if any file is gonna be shortened and
 WARNING: if your file is a .jpg.json, it's gonna cut into the jpg extension as it won't recognize the double extension. Fix these ones manually before.
 
 ## Adjust dates of all files
-You will need to install `exiftool`  
+You will need to install `exiftool`.  
 For macOs, if you have `brew` installed, just install it using the `brew install exiftool` command.
 Otherwise, you can download the package here and install it manually: `https://exiftool.org/install.html`  
 
@@ -52,10 +54,9 @@ Also, some files have their .json filename cropped or changed, you will have to 
 
 ## Fix iPhone Live Photos exported as .JPG
 In my specific case, Live photos would be extracted as a .JPG and a (1).JPG instead of a .JPG and a .MOV.
-So I ran exiftool to correct this for files that have a filetype MOV.  
-The script checks the filetype in the EXIF data of the file. If it's a .MOV, it will change the extension of the file to .MOV
+So I ran exiftool to correct this for files that have a filetype MOV. The script checks the filetype in the EXIF data of the file. If it's a .MOV, it will change the extension of the file to .MOV
 ```
-$ exiftool -r -ext jpg -overwrite_original -filename=%f.MOV -if '$filetype eq "MOV"' -progress .
+$ exiftool -r -ext jpg -overwrite_original -filename=%f.MOV -if '$filetype eq "MOV"' -progress <directory_name>
 ```
 
 ## Sort pictures by month
@@ -63,7 +64,7 @@ Using this lib: `https://github.com/andrewning/sortphotos` (clone it through `gi
 
 I ran it into every year folder separately so that I could see the result and modify quickly any problem (problems with wrong dates would usually be sent to the last folder created)
 ```
-$ sortphotos --sort %Y/%m --recursive source destination
+$ sortphotos --sort %Y/%m --recursive <source_directory> <destination_directory>
 ```
 You can use `-copy` if you want to copy instead of moving  
 You can use `--use-only-tags EXIF:DateTimeOriginal` if you see some pictures that are not sent to the right year/folder (sortphotos by default uses the earliest date found in the EXIF data file)
@@ -72,12 +73,12 @@ You can use `--use-only-tags EXIF:DateTimeOriginal` if you see some pictures tha
 ### View EXIF data for individual photos
 If you need to adjust EXIF for a specific picture or folder:
 ```
-$ exiftool <FILE/DIRECTORY>
+$ exiftool <filename>
 ```
 ### Adjust EXIF for individual photos
 If you need to adjust EXIF for a specific picture or folder:
 ```
-$ exiftool -overwrite_original -DateTimeOriginal="1988-02-05 00:00:00" <FILE/DIRECTORY>
+$ exiftool -overwrite_original -DateTimeOriginal="1988-02-05 00:00:00" <file or directory>
 ```
 ### If you want to integrate more data from the JSON file into the EXIF data
 The command below shows you different tags that you can extract from .json files to add to your pictures EXIF data.
@@ -86,11 +87,13 @@ $ exiftool -r -d %s -tagsfromfile "%d/%F.json" "-GPSAltitude<GeoDataAltitude" "-
 ```
 ### Remove all .json files
 When you don't need the JSON files anymore 
+Navigate to a directory and run (reminder: `.` is the current directory you're in)
 ```
 $ find . -name "*.json" -type f -delete
 ```
 ### Remove -edited files
 On some of the directories, Google used to adjust contrast/colors for every image. I chose to remove that for some folders.
+Navigate to a directory and run (reminder: `.` is the current directory you're in)
 ```
 $ find . -name "*-edited.jpg" -type f -delete
 ```
