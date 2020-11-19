@@ -15,6 +15,8 @@ In each year folder, you get all your media with their associated .json file tha
 
 ## Duplicate JSON files for -edited photos
 Since whenever you edit a picture with Google Photos, it saves a new file and adds `-edited` to the original name, I duplicated all .json files with the -edited extenseion so that when I run the exiftool scripts, -edited pictures would also find a json file to take data from.
+
+Navigate to the main Google Photos folder and run these commands:
 ```
 $ for file in */*.jpg.json; do cp -v "${file}" "${file/%.jpg.json/-edited.jpg.json}"; done
 $ for file in */*.JPG.json; do cp -v "${file}" "${file/%.JPG.json/-edited.JPG.json}"; done
@@ -25,6 +27,8 @@ You can do it for all needed extensions
 Some picture have a .json file with a shorter filename than their associated picture. I think Google has a character limit for the .json filename, so if your picture has a longer name, your .json and your picture filenames won't match and we won't be able to get the data from the json into the picture EXIF data. Sometimes I had to remove just 1 character from the maximum I've found so that they match a maximum of 46 characters.
 
 I used a library called `rename` that you can install through `brew` if you're on macOS: `brew install rename`. For Linux users, this command should be already available.
+
+Navigate to the folder of your choice and run this command:
 ```
 $ rename 's/^(.{46}).*(\..*)$/$1$2/' * -n
 ```
@@ -36,13 +40,13 @@ You will need to install `exiftool`
 For macOs, if you have `brew` installed, just install it using the `brew install exiftool` command.
 Otherwise, you can download the package here and install it manually: `https://exiftool.org/install.html`  
 
-This command will take the `photoTakenTime { timestamp: '' }` out of the .json associated to a picture and integrate it as EXIF data in the picture as `DateTimeOriginal`
+This command will take the `photoTakenTime { timestamp: '' }` out of the .json associated to a picture and integrate it as EXIF data in the picture as `DateTimeOriginal`. See the "useful scripts" section below to find additional tags that you can add to this command to get more data back into your pictures.
 ```
-$ exiftool -r -d %s -tagsfromfile "%d/%F.json" "-DateTimeOriginal<PhotoTakenTimeTimestamp" --ext json -overwrite_original -progress .
+$ exiftool -r -d %s -tagsfromfile "%d/%F.json" "-DateTimeOriginal<PhotoTakenTimeTimestamp" --ext json -overwrite_original -progress <directory_name>
 ```
 Sometimes the file will end with .json instead of .jpg.json, so I also ran this command
 ```
-$ exiftool -r -d %s -tagsfromfile "%d/%f.json" "-DateTimeOriginal<PhotoTakenTimeTimestamp" --ext json -overwrite_original -progress .
+$ exiftool -r -d %s -tagsfromfile "%d/%f.json" "-DateTimeOriginal<PhotoTakenTimeTimestamp" --ext json -overwrite_original -progress <directory_name>
 ```
 Also, some files have their .json filename cropped or changed, you will have to check when sorting photos (or run the script below beforehand).
 
@@ -74,6 +78,11 @@ $ exiftool <FILE/DIRECTORY>
 If you need to adjust EXIF for a specific picture or folder:
 ```
 $ exiftool -overwrite_original -DateTimeOriginal="1988-02-05 00:00:00" <FILE/DIRECTORY>
+```
+### If you want to integrate more data from the JSON file into the EXIF data
+The command below shows you different tags that you can extract from .json files to add to your pictures EXIF data.
+```
+$ exiftool -r -d %s -tagsfromfile "%d/%F.json" "-GPSAltitude<GeoDataAltitude" "-GPSLatitude<GeoDataLatitude" "-GPSLatitudeRef<GeoDataLatitude" "-GPSLongitude<GeoDataLongitude" "-GPSLongitudeRef<GeoDataLongitude" "-Keywords<Tags" "-Subject<Tags" "-Caption-Abstract<Description" "-ImageDescription<Description" "-DateTimeOriginal<PhotoTakenTimeTimestamp" -ext "*" -overwrite_original -progress --ext json <directory_name>
 ```
 ### Remove all .json files
 When you don't need the JSON files anymore 
