@@ -58,6 +58,11 @@ So I ran exiftool to correct this for files that have a filetype MOV. The script
 ```
 exiftool -r -ext jpg -overwrite_original -filename=%f.MOV -if '$filetype eq "MOV"' -progress <directory_name>
 ```
+If you want to remove the `(1)` in the new .MOV files, you can run this in each directory:
+```
+rename 's/^(.*)\(1\)(\.MOV)$/$1$2/' * -n
+```
+`-n` doesn't actually rename but shows you what would happen. If the result of the test shown is good for you, replace `-n` by `-v`.
 
 ## Sort pictures by month
 Using this lib: `https://github.com/andrewning/sortphotos` (clone it through `git` or just download the code, and then run the installation instructions on the page from a terminal)  
