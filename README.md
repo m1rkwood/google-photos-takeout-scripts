@@ -20,8 +20,8 @@ Since whenever you edit a picture with Google Photos, it saves a new file and ad
 
 Navigate to the main Google Photos folder and run these commands:
 ```
-for file in */*.jpg.json; do cp -v "${file}" "${file/%.jpg.json/-edited.jpg.json}"; done
-for file in */*.JPG.json; do cp -v "${file}" "${file/%.JPG.json/-edited.JPG.json}"; done
+for file in */*-edited.jpg; do cp -v "${file/%-edited.jpg/.jpg.json}" "${file/%-edited.jpg/-edited.jpg.json}"; done
+for file in */*-edited.JPG; do cp -v "${file/%-edited.JPG/.JPG.json}" "${file/%-edited.JPG/-edited.JPG.json}"; done
 ```
 You can do it for all needed extensions  
 
