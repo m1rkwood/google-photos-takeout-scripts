@@ -85,7 +85,7 @@ You can use `--use-only-tags EXIF:DateTimeOriginal` if you see some pictures tha
 
 ## Some useful scripts to use for edge cases
 ### View EXIF data for individual photos
-If you need to adjust EXIF for a specific picture or folder:
+If you need to view EXIF for a specific picture or folder:
 ```
 exiftool <filename>
 ```
