@@ -111,3 +111,11 @@ Navigate to a directory and run (reminder: `.` is the current directory you're i
 ```
 find . -name "*-edited.jpg" -type f -delete
 ```
+
+## Useful tools
+
+These tools can automate some of the tasks above:
+
+- https://github.com/AlecRust/gphotos-takeout-repair
+- https://github.com/TheLastGimbus/GooglePhotosTakeoutHelper
+- https://github.com/mattwilson1024/google-photos-exif
