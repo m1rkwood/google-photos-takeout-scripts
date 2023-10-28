@@ -112,7 +112,7 @@ Navigate to a directory and run (reminder: `.` is the current directory you're i
 find . -name "*-edited.jpg" -type f -delete
 ```
 
-## Useful tools
+## Related tools
 
 These tools can automate some of the tasks above:
 
