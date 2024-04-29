@@ -92,7 +92,13 @@ exiftool <filename>
 ### Adjust EXIF for individual photos
 If you need to adjust EXIF for a specific picture or folder:
 ```
-exiftool -overwrite_original -DateTimeOriginal="1988-02-05 00:00:00" <file or directory>
+exiftool -overwrite_original -DateTimeOriginal="2000-01-01 00:00:00" <file or directory>
+```
+### Rename photos to match date taken
+If you're using Nextcloud, you can change the name of files to reflect the date taken.
+If you want to do this with all your photos, you can use the command below. It will rename your photos in the directory with following format: `24-04-29 06-53-24 0000`, `0000` being incremental over all the photos.
+```
+exiftool -r -d '%y-%m-%d %H-%M-%S %%04.c.%%e' '-filename<DateTimeOriginal' .
 ```
 ### If you want to integrate more data from the JSON file into the EXIF data
 The command below shows you different tags that you can extract from .json files to add to your pictures EXIF data.
